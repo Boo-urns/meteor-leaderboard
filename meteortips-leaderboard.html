@@ -14,7 +14,13 @@
     {{#each player}}
 			<li class="player {{selectedClass}}">{{name}} : {{score}}</li>
     {{/each}}
-  </ul>
-{{otherHelperFunc}}
 
+  </ul>
+
+  <input type="button" class="increment" value="Give 5 Points">
+	<input type="button" class="decrement" value="Remove 5 Points">
+	
+	{{#if showSelectedPlayer}}
+  <h4>Selected Player: {{showSelectedPlayer.name}}</h4>
+  {{/if}}
 </template>

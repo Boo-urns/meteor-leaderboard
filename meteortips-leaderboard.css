@@ -2,3 +2,13 @@
 .selected{
     background-color: yellow;
 }
+
+.user--photo {
+	width: 40px;
+	border-radius: 20px;
+	border: 2px solid #eee;
+	float: left;	
+	margin-right: 10px;
+	-webkit-box-shadow: 0 0 5px 0 rgba(17,17,17,.25);
+	box-shadow: 0 0 5px 0 rgba(17,17,17,.25);
+}

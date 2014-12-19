@@ -2,12 +2,15 @@
     <title>Leaderboard</title>
 </head>
 <body>
+		{{> user}}
 		{{> loginButtons}}
 
     <h1>Leaderboard</h1>
     {{> leaderboard}}
 
 		{{> addPlayerForm}}
+
+		
 </body>
 
 
@@ -37,4 +40,12 @@
       <input type="submit" value="Add Player">
   </form>
   {{/if}}
+</template>
+
+<template name="user">
+	{{#if currentUser}}
+		
+		<img src="{{photo}}" alt="{{name}}" class="user--photo"><br>
+
+	{{/if}}
 </template>

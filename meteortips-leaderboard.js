@@ -2,6 +2,30 @@
 PlayersList  = new Mongo.Collection('players');
 
 if (Meteor.isClient) {
+  Template.user.helpers({
+    photo: function(){
+      var currentUserId = Meteor.userId();
+      var userInfo = Meteor.users.find(currentUserId).fetch();
+
+      console.log(userInfo);
+      var services = userInfo[0].services;
+
+      if('google' in services) {
+        return services.google.picture;
+      } else {
+        return 'http://placehold.it/350x350';
+      }
+     
+    },
+
+    name: function() {
+      var currentUserId = Meteor.userId();
+      var userInfo = Meteor.users.find(currentUserId).fetch();
+
+      return userInfo[0].services.google.name;
+    }
+  });
+
   Template.leaderboard.helpers({
     player: function(){
       var currentUserId = Meteor.userId();
@@ -29,8 +53,6 @@ if (Meteor.isClient) {
     'click .player': function(){
       var playerId = this._id;
       Session.set('selectedPlayer', playerId);
-      //var selectedPlayer = Session.get('selectedPlayer');
-      //PlayersList.update({_id: playerId}, {$set: {score: 100}});
     },
     'click .remove': function(){
       var selectedPlayer = Session.get('selectedPlayer');
@@ -58,6 +80,8 @@ if (Meteor.isClient) {
         score: 0,
         createdBy: currentUserId
       });
+
+      e.target.playerName.value = '';
     },
   });
 }

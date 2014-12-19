@@ -10,12 +10,21 @@ if (Meteor.isClient) {
     },
     numPlayers: function(){
       return PlayersList.find().count();
+    },
+    selectedClass: function(){
+      var playerId = this._id;
+      var selectedPlayer = Session.get('selectedPlayer');
+      if(playerId === selectedPlayer)
+        return 'selected';
     }
   });
 
   Template.leaderboard.events({
     'click .player': function(){
-      console.log("You clicked on .player element");
+      var playerId = this._id;
+      Session.set('selectedPlayer', playerId);
+      var selectedPlayer = Session.get('selectedPlayer');
+      PlayersList.update({_id: playerId}, {$set: {score: 100}});
     }
   });
 }

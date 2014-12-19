@@ -2,13 +2,19 @@
 PlayersList  = new Mongo.Collection('players');
 
 if (Meteor.isClient) {
+  Meteor.subscribe('thePlayers');
+  Meteor.subscribe('userData');
+  Meteor.subscribe('allUserData');
+
   Template.user.helpers({
     photo: function(){
-      var currentUserId = Meteor.userId();
-      var userInfo = Meteor.users.find(currentUserId).fetch();
 
-      console.log(userInfo);
-      var services = userInfo[0].services;
+      console.log(Meteor.user());
+
+      //var currentUserId = Meteor.userId();
+      var user = Meteor.user();
+      var services = user.services;
+
 
       if('google' in services) {
         return services.google.picture;
@@ -29,13 +35,12 @@ if (Meteor.isClient) {
   Template.leaderboard.helpers({
     player: function(){
       var currentUserId = Meteor.userId();
-      return PlayersList.find({createdBy: currentUserId}, 
-                              {sort: {score: -1, name: 1} });
+      return PlayersList.find({}, {sort: {score: -1, name: 1} });
 
     },
     numPlayers: function(){
       var currentUserId = Meteor.userId();
-      return PlayersList.find({createdBy: currentUserId}).count();
+      return PlayersList.find().count();
     },
     selectedClass: function(){
       var playerId = this._id;
@@ -87,6 +92,25 @@ if (Meteor.isClient) {
 }
 
 if (Meteor.isServer) {
+  Meteor.publish('thePlayers', function(){
+    var currentUserId = this.userId;
+    return PlayersList.find({createdBy: currentUserId});
+  });
+
+  // Meteor.publish('theUser', function(){
+  //   var currentUserId = this.userId;
+  //   return Meteor.users.find(currentUserId);
+  // });
+
+  Meteor.publish("userData", function () {
+    return Meteor.users.find({_id: this.userId},
+        {fields: {'services': 1}});
+    //return Meteor.users.find(this.userId);
+  });
+  Meteor.publish("allUserData", function () {
+    return Meteor.users.find({}, {fields: {'nested.things': 1}});
+  });
+
 
   // Meteor.startup(function () {
   //   // code to run on server at startup

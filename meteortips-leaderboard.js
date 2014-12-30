@@ -61,15 +61,16 @@ if (Meteor.isClient) {
     },
     'click .remove': function(){
       var selectedPlayer = Session.get('selectedPlayer');
-      PlayersList.remove(selectedPlayer);
+      //PlayersList.remove(selectedPlayer);
+      Meteor.call('removePlayerData', selectedPlayer);
     },
     'click .increment': function() {
       var selectedPlayer = Session.get('selectedPlayer');
-      PlayersList.update(selectedPlayer, {$inc: {score: 5}});
+      Meteor.call('modifyPlayerScore', selectedPlayer, 5);
     },
     'click .decrement': function() {
       var selectedPlayer = Session.get('selectedPlayer');
-      PlayersList.update(selectedPlayer, {$inc: {score: -5}});
+      Meteor.call('modifyPlayerScore', selectedPlayer, -5);
     }
   });
 
@@ -79,14 +80,11 @@ if (Meteor.isClient) {
     'submit form': function(e){
       e.preventDefault();
       var playerNameVar = e.target.playerName.value;
-      var currentUserId = Meteor.userId();
-      PlayersList.insert({
-        name: playerNameVar,
-        score: 0,
-        createdBy: currentUserId
-      });
 
+      Meteor.call('insertPlayerData', playerNameVar);
       e.target.playerName.value = '';
+
+
     },
   });
 }
@@ -97,11 +95,6 @@ if (Meteor.isServer) {
     return PlayersList.find({createdBy: currentUserId});
   });
 
-  // Meteor.publish('theUser', function(){
-  //   var currentUserId = this.userId;
-  //   return Meteor.users.find(currentUserId);
-  // });
-
   Meteor.publish("userData", function () {
     return Meteor.users.find({_id: this.userId},
         {fields: {'services': 1}});
@@ -111,7 +104,22 @@ if (Meteor.isServer) {
     return Meteor.users.find({}, {fields: {'nested.things': 1}});
   });
 
-
+  Meteor.methods({
+    insertPlayerData: function(playerName){
+        var currentUserId = Meteor.userId();
+         PlayersList.insert({
+            name: playerName,
+            score: 0,
+            createdBy: currentUserId
+        });
+    },
+    removePlayerData: function(player){
+      PlayersList.remove(player);
+    },
+    modifyPlayerScore: function(player, score){
+      PlayersList.update(player, {$inc: {score: score}})
+    },
+  });
   // Meteor.startup(function () {
   //   // code to run on server at startup
   // });
